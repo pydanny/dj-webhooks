@@ -14,12 +14,12 @@ CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
 def event_choices():
     WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
     if WEBHOOK_EVENTS is None:
-        msg = "Please add some webhook events."
+        msg = "Please add some events in settings.WEBHOOK_EVENTS."
         raise ImproperlyConfigured(msg)
     try:
-        choices = [(x['name'], x['name']) for x in settings.WEBHOOK_EVENTS]
+        choices = [(x, x) for x in settings.WEBHOOK_EVENTS]
     except KeyError as e:
-        msg = "Your settings.WEBHOOK_EVENTS is improperly configured"
+        msg = "Your settings.WEBHOOK_EVENTS is improperly configured."
         raise ImproperlyConfigured(e)
     except Exception as e:
         raise ImproperlyConfigured(e)
@@ -54,9 +54,9 @@ class WebhookTarget(TimeStampedModel):
                 max_length=255, choices=CONTENT_TYPE_CHOICES)
 
     def __str__(self):
-        return "{}:{}".format(
-            self.user.username,
-            self.url[:30]
+        return "{}=>{}".format(
+            self.owner.username,
+            self.target_url[:30]
         )
 
     class Meta:
@@ -68,7 +68,7 @@ class WebhookTarget(TimeStampedModel):
 @python_2_unicode_compatible
 class Delivery(TimeStampedModel):
 
-    webhook = models.ForeignKey("webhooks.WebhookTarget")
+    webhook = models.ForeignKey(WebhookTarget)
 
     payload = JSONField()
 

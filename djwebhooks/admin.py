@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import WebHook, Delivery
+from .models import WebhookTarget, Delivery
 
 admin.site.register(Delivery)
-admin.site.register(WebHook)
+admin.site.register(WebhookTarget)
