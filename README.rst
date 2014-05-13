@@ -20,6 +20,13 @@ Documentation
 
 The full documentation is at https://dj-webhooks.readthedocs.org.
 
+Requirements
+------------
+
+* django>=1.5.5
+* webhooks
+* django-jsonfield
+
 Quickstart
 ----------
 
