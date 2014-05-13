@@ -1,3 +1,4 @@
 django>=1.5.1
-wheel==0.23.0
+wheel>=0.23.0
+django-jsonfield>=0.9.12
 # Additional requirements go here

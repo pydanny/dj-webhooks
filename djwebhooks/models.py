@@ -84,8 +84,8 @@ class Delivery(TimeStampedModel):
     # TODO - add rest of recorded header infos
 
     def __str__(self):
-        return "{}:{}".format(
-            self.pk,
+        return "{}=>{}".format(
+            self.created,
             self.webhook
         )
 
