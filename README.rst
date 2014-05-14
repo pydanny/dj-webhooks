@@ -57,12 +57,14 @@ Add some webhook targets:
     from webhooks.models import Webhook
     WebhookTarget.objects.create(
         owner=user,
-        event="purchase.confirmed",
+        event="purchase.paid",
         target_url="https://mystorefront.com/webhooks/",
         header_content_type=Webhook.CONTENT_TYPE_JSON,
     )
 
 Then use it in a project:
+
+.. code-bloxk:: python
 
     from django.contrib.auth import get_user_model
     User = get_user_model()
