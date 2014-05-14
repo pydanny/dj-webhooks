@@ -12,9 +12,6 @@ dj-webhooks
 .. image:: https://travis-ci.org/pydanny/dj-webhooks.png?branch=master
     :target: https://travis-ci.org/pydanny/dj-webhooks
 
-.. image:: https://coveralls.io/repos/pydanny/dj-webhooks/badge.png?branch=master
-    :target: https://coveralls.io/r/pydanny/dj-webhooks?branch=master
-
 Django + Webhooks Made Easy
 
 **Warning:** Still in pre-alpha status. Not used in production on ANYTHING.
