@@ -2,6 +2,9 @@
 dj-webhooks
 =============================
 
+.. image:: https://pypip.in/d/dj-webhooks/badge.png
+        :target: https://pypi.python.org/pypi/dj-webhooks
+
 .. image:: https://badge.fury.io/py/dj-webhooks.png
     :target: https://badge.fury.io/py/dj-webhooks
 
