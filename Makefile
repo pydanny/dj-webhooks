@@ -27,7 +27,7 @@ lint:
 	flake8 dj-webhooks tests
 
 test:
-	python runtests.py test
+	python runtests.py
 
 test-all:
 	tox
