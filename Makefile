@@ -33,7 +33,7 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source dj-webhooks setup.py test
+	coverage run --source djwebhooks runtests.py
 	coverage report -m
 	coverage html
 	open htmlcov/index.html

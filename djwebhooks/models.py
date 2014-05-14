@@ -51,7 +51,7 @@ class WebhookTarget(TimeStampedModel):
     target_url = models.URLField(max_length=255)
 
     header_content_type = models.CharField("Header content-type",
-                max_length=255, choices=CONTENT_TYPE_CHOICES)
+                max_length=255, choices=CONTENT_TYPE_CHOICES, default=CONTENT_TYPE_JSON)
 
     def __str__(self):
         return "{}=>{}".format(

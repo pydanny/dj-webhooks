@@ -5,11 +5,15 @@ dj-webhooks
 .. image:: https://badge.fury.io/py/dj-webhooks.png
     :target: https://badge.fury.io/py/dj-webhooks
 
-.. .. image:: https://travis-ci.org/pydanny/dj-webhooks.png?branch=master
-..     :target: https://travis-ci.org/pydanny/dj-webhooks
+.. image:: https://pypip.in/wheel/dj-webhooks/badge.png
+    :target: https://pypi.python.org/pypi/dj-webhooks/
+    :alt: Wheel Status
 
-.. .. image:: https://coveralls.io/repos/pydanny/dj-webhooks/badge.png?branch=master
-..     :target: https://coveralls.io/r/pydanny/dj-webhooks?branch=master
+.. image:: https://travis-ci.org/pydanny/dj-webhooks.png?branch=master
+    :target: https://travis-ci.org/pydanny/dj-webhooks
+
+.. image:: https://coveralls.io/repos/pydanny/dj-webhooks/badge.png?branch=master
+    :target: https://coveralls.io/r/pydanny/dj-webhooks?branch=master
 
 Django + Webhooks Made Easy
 

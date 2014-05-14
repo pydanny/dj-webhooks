@@ -1,4 +1,4 @@
-django>=1.5.1
-wheel>=0.23.0
+django>=1.5.5
 django-jsonfield>=0.9.12
-# Additional requirements go here
+webhooks
+wheel>=0.23.0

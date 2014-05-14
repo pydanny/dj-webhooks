@@ -1,11 +1,19 @@
 import json
 from time import sleep
 
+from django.core.exceptions import ImproperlyConfigured
+
 import requests
 
-from .conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS
+from .conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS, WEBHOOKS_SENDER
 from ..encoders import WebHooksJSONEncoder
 from .models import WebHook, Delivery
+
+try:
+    WEBHOOKS_SENDER_CALLABLE = __import__(WEBHOOKS_SENDER)
+except ImportError:
+    msg = "Please set an existing WEBHOOKS_SENDER class."
+    raise ImproperlyConfigured(msg)
 
 
 def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):

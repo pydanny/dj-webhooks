@@ -20,6 +20,7 @@ try:
         ],
         SITE_ID=1,
         NOSE_ARGS=['-s'],
+        WEBHOOK_EVENTS=['test.one', 'test.two']
     )
 
     from django_nose import NoseTestSuiteRunner
