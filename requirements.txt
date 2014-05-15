@@ -1,5 +1,5 @@
 django>=1.5.5
 django-jsonfield>=0.9.12
 django-model-utils>=2.0.2
-git+https://github.com/pydanny/webhooks.git@93bd777acaa27af33ee9a400debe0a6b34a5a101
+webhooks>=0.3.1
 wheel>=0.23.0

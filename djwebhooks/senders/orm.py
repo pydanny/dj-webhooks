@@ -23,7 +23,8 @@ class DjangoSenderable(Senderable):
                 success=self.success,
                 response_message=self.response.content,
                 hash_value=self.hash_value,
-                response_status=self.response.status_code
+                response_status=self.response.status_code,
+                notification=message
             )
         else:
             Delivery.objects.create(
@@ -32,6 +33,7 @@ class DjangoSenderable(Senderable):
                 attempt=self.attempt,
                 success=self.success,
                 hash_value=self.hash_value,
+                notification=message
             )
 
 

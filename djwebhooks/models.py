@@ -76,6 +76,8 @@ class Delivery(TimeStampedModel):
     attempt = models.IntegerField("How many times has this been attempted to be delivered")
     hash_value = models.CharField(max_length=255, blank=True)
 
+    notification = models.TextField("Passed back from the Senderable object", blank=True)
+
     # response info
     response_message = models.TextField("Whatever is sent back", blank=True)
     response_status = models.IntegerField("HTTP status code", blank=True, null=True)
