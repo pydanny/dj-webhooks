@@ -23,8 +23,10 @@ Requirements
 ------------
 
 * django>=1.5.5
-* webhooks
-* django-jsonfield
+* django-jsonfield>=0.9.12
+* django-model-utils>=2.0.2
+* django-rq>=0.6.1
+* webhooks>=0.3.1
 
 Quickstart
 ----------
