@@ -20,14 +20,18 @@ from .utils import import_sender_callable
 from webhooks.decorators import base_hook
 from webhooks.hashes import basic_hash_function
 
+# sender_callable is set via settings.WEBHOOKS_SENDER
+sender_callable = import_sender_callable(WEBHOOKS_SENDER)
 
 # This is decorator that does all the lifting.
-# sender_callable is set via settings.py
 hook = partial(
     base_hook,
-    sender_callable=import_sender_callable(WEBHOOKS_SENDER),
+    sender_callable=sender_callable,
     hash_function=basic_hash_function
 )
+
+hook.__doc__ = getattr(sender_callable, "doc", "No documentation yet!")
+
 
 # alias the hook function
 webhook = hook
