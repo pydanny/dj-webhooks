@@ -12,6 +12,7 @@ History
 * Added a `redis-hook` decorator.
 * Added admin views.
 * Ramped up test coverage to 89%.
+* setup.py now includes all dependencies.
 
 
 0.1.0 (2014-05-12)
