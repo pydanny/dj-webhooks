@@ -1,12 +1,8 @@
-import json
-from time import sleep
-
 from django.core.exceptions import ImproperlyConfigured
 
-import requests
+from webhooks.senders.base import Senderable
 
 from .conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS, WEBHOOKS_SENDER
-from ..encoders import WebHooksJSONEncoder
 from .models import WebHook, Delivery
 
 try:
@@ -14,6 +10,20 @@ try:
 except ImportError:
     msg = "Please set an existing WEBHOOKS_SENDER class."
     raise ImproperlyConfigured(msg)
+
+
+class DjangoSenderable(Senderable):
+
+    def notify(self, message):
+            Delivery.objects.create(
+            webhook=self.webhook,
+            payload=self.payload,
+            attempt=self.attempt,
+            success=self.success,
+            response_message=self.response.content,
+            hash_value=self.hash_value,
+            response_status=self.response.status_code
+        )
 
 
 def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
@@ -41,69 +51,24 @@ def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
         raise TypeError(msg)
     owner = dkwargs['kwargs']
 
+    senderobj = Senderable(
+            wrapped, dkwargs, hash_value, WEBHOOK_ATTEMPTS, *args, **kwargs
+    )
+
+    # Add the webhook object just so it's around
     # TODO - error handling if this can't be found
-    webhook = WebHook.objects.get(event=event, owner=owner)
+    senderobj.webhook = WebHook.objects.get(event=event, owner=owner)
 
-    # Create the payload by calling the hooked/wrapped function.
-    payload = wrapped(*args, **kwargs)
+    # Get the target url and add it
+    senderobj.url = senderobj.webhook.url
 
-    # Add the hash value if there is one.
-    if hash_value is not None and len(hash_value) > 0:
-        payload['hash'] = hash_value
+    # Get the payload. This overides the senderobj.payload property.
+    senderobj.payload = senderobj.get_payload()
 
     # Get the creator and add it to the payload.
-    creator = getattr(kwargs['creator'], WEBHOOK_OWNER_FIELD)
-    payload['creator'] = creator
+    senderobj.payload['creator'] = getattr(kwargs['creator'], WEBHOOK_OWNER_FIELD)
 
     # get the event and add it to the payload
-    event = dkwargs['event']
-    payload['event'] = event
+    senderobj.payload['event'] = dkwargs['event']
 
-    # Dump the payload to json
-    data = json.dumps(payload, cls=WebHooksJSONEncoder)
-
-    # Loop through the attempts and log each attempt
-    for i, attempt in enumerate(range(len(WEBHOOK_ATTEMPTS) - 1)):
-        # log each attempt.
-        # print(
-        #     "Attempt: {attempt}, {target_url}\n{payload}".format(
-        #         attempt=attempt,
-        #         target_url=webhook.url,
-        #         payload=data
-        #     )
-        # )
-
-        # post the payload
-        r = requests.post(webhook.url, payload)
-
-        # anything with a 200 status code  is a success
-        if r.status_code >= 200 and r.status_code < 300:
-            # Record the current status
-            Delivery.objects.create(
-                webhook=webhook,
-                payload=data,
-                attempt=i + 1,
-                success=True,
-                response_message=r.content,
-                hash_value=hash_value,
-                response_status=r.status_code
-            )
-            # Exit the sender function.
-            return True
-
-        # Record the current status of things and try again.
-        Delivery.objects.create(
-            webhook=webhook,
-            payload=data,
-            attempt=i + 1,
-            success=True,
-            response_message=r.content,
-            hash_value=hash_value,
-            response_status=r.status_code
-        )
-
-        # Wait a bit before the next attempt
-        sleep(attempt)
-
-    # Exit the sender function.
-    return False
+    senderobj.send()

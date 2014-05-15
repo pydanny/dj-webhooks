@@ -1,5 +1,5 @@
 django>=1.5.5
 django-jsonfield>=0.9.12
 django-model-utils>=2.0.2
-webhooks
+webhooks>=0.3.0
 wheel>=0.23.0

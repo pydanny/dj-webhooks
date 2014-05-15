@@ -37,7 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "django>=1.5.5",
-        "webhooks",
+        "webhooks>=0.3.0",
         "django-jsonfield>=0.9.12"
     ],
     license="BSD",
