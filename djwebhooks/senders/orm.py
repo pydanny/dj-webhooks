@@ -2,8 +2,8 @@ from django.core.exceptions import ImproperlyConfigured
 
 from webhooks.senders.base import Senderable
 
-from .conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS, WEBHOOKS_SENDER
-from .models import WebHook, Delivery
+from ..conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS, WEBHOOKS_SENDER
+from ..models import WebhookTarget, Delivery
 
 try:
     WEBHOOKS_SENDER_CALLABLE = __import__(WEBHOOKS_SENDER)
@@ -15,15 +15,24 @@ except ImportError:
 class DjangoSenderable(Senderable):
 
     def notify(self, message):
+        if self.success:
             Delivery.objects.create(
-            webhook=self.webhook,
-            payload=self.payload,
-            attempt=self.attempt,
-            success=self.success,
-            response_message=self.response.content,
-            hash_value=self.hash_value,
-            response_status=self.response.status_code
-        )
+                webhook=self.webhook_target,
+                payload=self.payload,
+                attempt=self.attempt,
+                success=self.success,
+                response_message=self.response.content,
+                hash_value=self.hash_value,
+                response_status=self.response.status_code
+            )
+        else:
+            Delivery.objects.create(
+                webhook=self.webhook_target,
+                payload=self.payload,
+                attempt=self.attempt,
+                success=self.success,
+                hash_value=self.hash_value,
+            )
 
 
 def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
@@ -47,28 +56,28 @@ def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     event = dkwargs['event']
 
     if "owner" not in kwargs:
-        msg = "webhooks.django.senders.sender requires an 'owner' argument."
+        msg = "webhooks.django.senders.orm.sender requires an 'owner' argument."
         raise TypeError(msg)
-    owner = dkwargs['kwargs']
+    owner = kwargs['owner']
 
-    senderobj = Senderable(
+    senderobj = DjangoSenderable(
             wrapped, dkwargs, hash_value, WEBHOOK_ATTEMPTS, *args, **kwargs
     )
 
     # Add the webhook object just so it's around
     # TODO - error handling if this can't be found
-    senderobj.webhook = WebHook.objects.get(event=event, owner=owner)
+    senderobj.webhook_target = WebhookTarget.objects.get(event=event, owner=owner)
 
     # Get the target url and add it
-    senderobj.url = senderobj.webhook.url
+    senderobj.url = senderobj.webhook_target.target_url
 
     # Get the payload. This overides the senderobj.payload property.
     senderobj.payload = senderobj.get_payload()
 
     # Get the creator and add it to the payload.
-    senderobj.payload['creator'] = getattr(kwargs['creator'], WEBHOOK_OWNER_FIELD)
+    senderobj.payload['owner'] = getattr(kwargs['owner'], WEBHOOK_OWNER_FIELD)
 
     # get the event and add it to the payload
     senderobj.payload['event'] = dkwargs['event']
 
-    senderobj.send()
+    return senderobj.send()
