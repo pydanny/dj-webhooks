@@ -14,28 +14,18 @@ Unlike the standard webhooks.decorator, this doesn't
 
 from functools import partial
 
-# from django.core.exceptions import ImproperlyConfigured
 
+from .conf import WEBHOOKS_SENDER
+from .utils import import_sender_callable
 from webhooks.decorators import base_hook
 from webhooks.hashes import basic_hash_function
-
-# from .conf import WEBHOOKS_SENDER
-
-# try:
-#     package = __import__(WEBHOOKS_SENDER)
-#     WEBHOOKS_SENDER_CALLABLE = package.sender
-# except ImportError:
-#     msg = "Please set an existing WEBHOOKS_SENDER class."
-#     raise ImproperlyConfigured(msg)
-
-from djwebhooks.senders.orm import sender as WEBHOOKS_SENDER_CALLABLE
 
 
 # This is decorator that does all the lifting.
 # sender_callable is set via settings.py
 hook = partial(
     base_hook,
-    sender_callable=WEBHOOKS_SENDER_CALLABLE,
+    sender_callable=import_sender_callable(WEBHOOKS_SENDER),
     hash_function=basic_hash_function
 )
 

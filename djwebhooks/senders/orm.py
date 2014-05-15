@@ -1,15 +1,10 @@
-from django.core.exceptions import ImproperlyConfigured
-
 from webhooks.senders.base import Senderable
 
-from ..conf import WEBHOOK_OWNER_FIELD, WEBHOOK_ATTEMPTS, WEBHOOKS_SENDER
+from ..conf import (
+        WEBHOOK_OWNER_FIELD,
+        WEBHOOK_ATTEMPTS,
+    )
 from ..models import WebhookTarget, Delivery
-
-try:
-    WEBHOOKS_SENDER_CALLABLE = __import__(WEBHOOKS_SENDER)
-except ImportError:
-    msg = "Please set an existing WEBHOOKS_SENDER class."
-    raise ImproperlyConfigured(msg)
 
 
 class DjangoSenderable(Senderable):
