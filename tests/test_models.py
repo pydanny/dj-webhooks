@@ -46,13 +46,13 @@ class TestWebhookTarget(TestCase):
         )
 
     def test_delivery(self):
-        webhook = WebhookTarget.objects.create(
+        webhook_target = WebhookTarget.objects.create(
             owner=self.user,
             event=conf.WEBHOOK_EVENTS[0],
             target_url="http://httpbin.com"
         )
         delivery = Delivery.objects.create(
-            webhook=webhook,
+            webhook_target=webhook_target,
             attempt=1,
             payload={},
         )

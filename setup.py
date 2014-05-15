@@ -44,7 +44,7 @@ setup(
     zip_safe=False,
     keywords='dj-webhooks',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',

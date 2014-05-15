@@ -12,7 +12,7 @@ class DjangoSenderable(Senderable):
     def notify(self, message):
         if self.success:
             Delivery.objects.create(
-                webhook=self.webhook_target,
+                webhook_target=self.webhook_target,
                 payload=self.payload,
                 attempt=self.attempt,
                 success=self.success,
@@ -23,7 +23,7 @@ class DjangoSenderable(Senderable):
             )
         else:
             Delivery.objects.create(
-                webhook=self.webhook_target,
+                webhook_target=self.webhook_target,
                 payload=self.payload,
                 attempt=self.attempt,
                 success=self.success,

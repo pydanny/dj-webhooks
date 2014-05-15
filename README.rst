@@ -17,11 +17,6 @@ dj-webhooks
 
 Django + Webhooks Made Easy
 
-**Warning:** Still in pre-alpha status. Not used in production on ANYTHING.
-
-Documentation
--------------
-
 The full documentation is at https://dj-webhooks.readthedocs.org.
 
 Requirements
@@ -67,20 +62,19 @@ Add some webhook targets:
 
 Then use it in a project:
 
-.. code-bloxk:: python
+.. code-block:: python
 
     from django.contrib.auth import get_user_model
     User = get_user_model()
     user = User.objects.get(username="pydanny")
 
-    from djwebhooks.decorators import webhook
+    from djwebhooks.decorators import hook
 
     from myproject.models import Purchase
 
     # Event argument helps identify the webhook target
     @hook(event="purchase.paid")
-    def send_purchase_confirmation(purchase, webhook_owner):
-        # Webhook_owner also helps identify the webhook target
+    def send_purchase_confirmation(purchase, owner): # Webhook_owner also helps identify the webhook target
         return {
             "order_num": purchase.order_num,
             "date": purchase.confirm_date,
@@ -88,7 +82,36 @@ Then use it in a project:
         }
 
     for purchase in Purchase.objects.filter(status="paid"):
-        send_purchase_confirmation(purchase, user)
+        send_purchase_confirmation(purchase=purchase, owner=user)
+
+In a queue using django-rq
+----------------------------
+
+Assuming you are running Redis and also have django-rq configured:
+
+.. code-block:: python
+
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    user = User.objects.get(username="pydanny")
+
+    # import redis hook
+    from djwebhooks.decorators import redis_hook
+
+    from myproject.models import Purchase
+
+    # Event argument helps identify the webhook target
+    @redis_hook(event="purchase.paid")
+    def send_purchase_confirmation(purchase, owner): # Webhook_owner also helps identify the webhook target
+        return {
+            "order_num": purchase.order_num,
+            "date": purchase.confirm_date,
+            "line_items": [x.sku for x in purchase.lineitem_set.filter(inventory__gt=0)]
+        }
+
+    for purchase in Purchase.objects.filter(status="paid"):
+        job = send_purchase_confirmation(purchase=purchase, owner=user)
+
 
 
 Requirements

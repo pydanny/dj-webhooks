@@ -53,7 +53,7 @@ class WebhookTarget(TimeStampedModel):
 @python_2_unicode_compatible
 class Delivery(TimeStampedModel):
 
-    webhook = models.ForeignKey(WebhookTarget)
+    webhook_target = models.ForeignKey(WebhookTarget)
 
     payload = JSONField()
 
@@ -74,7 +74,7 @@ class Delivery(TimeStampedModel):
         return "{}=>{}=>{}".format(
             self.success,
             self.created,
-            self.webhook
+            self.webhook_target
         )
 
     class Meta:
