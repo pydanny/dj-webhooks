@@ -1,68 +1,71 @@
-# -*- coding: utf-8 -*-
-import json
+# -*- coding: utf-8 -*-import logging
 import logging
-from time import sleep
 
-
-import requests
 from django_rq import job
 
-from ..conf import WEBHOOK_ATTEMPTS
-from ..encoders import WebHooksJSONEncoder
+from webhooks.senders.base import Senderable
+from ..conf import WEBHOOK_ATTEMPTS, WEBHOOK_OWNER_FIELD
+from ..models import WebhookTarget
 
 logger = logging.getLogger(__name__)
 
 
+class DjangoRQSenderable(Senderable):
+
+    def notify(self, message):
+        logger.info(message)
+
+
 @job
 def worker(wrapped, dkwargs, hash_value=None, *args, **kwargs):
+    """
+        This is an asynchronous sender callable that uses the Django ORM to store
+            webhooks. Redis is used to handle the message queue.
 
-    # Get the URL from the kwargs
-    url = kwargs.get('url', None)
-    if url is None:
-        url = dkwargs['url']
+        dkwargs argument requires the following key/values:
 
-    # Create the payload by calling the hooked/wrapped function.
-    payload = wrapped(*args, **kwargs)
+            :event: A string representing an event.
 
-    # Add the hash value if there is one.
-    if hash_value is not None and len(hash_value) > 0:
-        payload['hash'] = hash_value
+        kwargs argument requires the following key/values
 
-    # Dump the payload to json
-    data = json.dumps(payload, cls=WebHooksJSONEncoder)
+            :owner: The user who created/owns the event
+    """
 
-    for attempt in range(len(WEBHOOK_ATTEMPTS) - 1):
-        # Print each attempt. In practice, this would write to logs
-        msg = "Attempt: {attempt}, {url}\n{payload}".format(
-                attempt=attempt + 1,
-                url=url,
-                payload=data
-            )
-        logger.debug(msg)
+    if "event" not in dkwargs:
+        msg = "webhooks.django.decorators.hook requires an 'event' argument."
+        raise TypeError(msg)
+    event = dkwargs['event']
 
-        # post the payload
-        r = requests.post(url, payload)
+    if "owner" not in kwargs:
+        msg = "webhooks.django.senders.orm.sender requires an 'owner' argument."
+        raise TypeError(msg)
+    owner = kwargs['owner']
 
-        # anything with a 200 status code  is a success
-        if r.status_code >= 200 and r.status_code < 300:
-            # Exit the sender function.  Here we provide the payload as a result.
-            #   In practice, this means writing the result to a datastore.
-            logger.debug("Success!")
-            return payload
+    senderobj = DjangoRQSenderable(
+            wrapped, dkwargs, hash_value, WEBHOOK_ATTEMPTS, *args, **kwargs
+    )
 
-        # Wait a bit before the next attempt
-        sleep(attempt)
-    else:
-        logger.debug("Could not send webhook")
+    # Add the webhook object just so it's around
+    # TODO - error handling if this can't be found
+    senderobj.webhook_target = WebhookTarget.objects.get(event=event, owner=owner)
 
-    # Exit the sender function.  Here we provide the payload as a result for
-    #   display when this function is run outside of the sender function.
-    return payload
+    # Get the target url and add it
+    senderobj.url = senderobj.webhook_target.target_url
+
+    # Get the payload. This overides the senderobj.payload property.
+    senderobj.payload = senderobj.get_payload()
+
+    # Get the creator and add it to the payload.
+    senderobj.payload['owner'] = getattr(kwargs['owner'], WEBHOOK_OWNER_FIELD)
+
+    # get the event and add it to the payload
+    senderobj.payload['event'] = dkwargs['event']
+
+    return senderobj.send()
 
 
 def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
-
     logger.debug("Starting async")
-    worker(wrapped, dkwargs, hash_value=None, *args, **kwargs)
-    worker.delay
+    job = worker(wrapped, dkwargs, hash_value, *args, **kwargs)
     logger.debug("Ending async")
+    return job

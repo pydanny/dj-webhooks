@@ -35,6 +35,3 @@ class BasicTest(TestCase):
         self.assertEqual(results['what'], "me worry?")
 
         self.assertEqual(Delivery.objects.count(), 1)
-
-    def tearDown(self):
-        pass

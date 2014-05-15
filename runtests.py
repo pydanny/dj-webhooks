@@ -21,7 +21,24 @@ try:
         SITE_ID=1,
         NOSE_ARGS=['-s'],
         WEBHOOK_EVENTS=['test.one', 'test.two'],
-        WEBHOOKS_SENDER="djwebhooks.senders.orm.sender"
+        WEBHOOKS_SENDER="djwebhooks.senders.orm.sender",
+        RQ_QUEUES={
+            'default': {
+                'HOST': 'localhost',
+                'PORT': 6379,
+                'DB': 0,
+            },
+            'high': {
+                'HOST': 'localhost',
+                'PORT': 6379,
+                'DB': 0,
+            },
+            'low': {
+                'HOST': 'localhost',
+                'PORT': 6379,
+                'DB': 0,
+            }
+        }
     )
 
     from django_nose import NoseTestSuiteRunner
