@@ -1,30 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 from jsonfield.fields import JSONField
 from model_utils.models import TimeStampedModel
 
+from .conf import WEBHOOK_EVENTS_CHOICES
+
 CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
-
-
-def event_choices():
-    WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
-    if WEBHOOK_EVENTS is None:
-        msg = "Please add some events in settings.WEBHOOK_EVENTS."
-        raise ImproperlyConfigured(msg)
-    try:
-        choices = [(x, x) for x in settings.WEBHOOK_EVENTS]
-    except KeyError as e:
-        msg = "Your settings.WEBHOOK_EVENTS is improperly configured."
-        raise ImproperlyConfigured(e)
-    except Exception as e:
-        raise ImproperlyConfigured(e)
-
-    return choices
 
 
 @python_2_unicode_compatible
@@ -41,12 +26,12 @@ class WebhookTarget(TimeStampedModel):
         (CONTENT_TYPE_FORM, CONTENT_TYPE_FORM)
     )
 
-    WEBHOOK_EVENTS = event_choices()
+    WEBHOOK_EVENTS = WEBHOOK_EVENTS_CHOICES
 
     # TODO - add Webhook event choices as indivial attributes to this model, instantiated or not
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='webhooks')
-    event = models.CharField(max_length=255, choices=event_choices())
+    event = models.CharField(max_length=255, choices=WEBHOOK_EVENTS_CHOICES)
 
     target_url = models.URLField(max_length=255)
 

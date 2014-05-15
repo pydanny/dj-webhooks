@@ -34,9 +34,6 @@ class BasicTest(TestCase):
 
         self.assertEqual(results['what'], "me worry?")
 
-        # TODO - figure out why two Deliveries are being made instead of one.
-        #raise Exception([x.notification for x in Delivery.objects.all()])
-        #raise Exception([x for x in Delivery.objects.all()])
         self.assertEqual(Delivery.objects.count(), 1)
 
     def tearDown(self):
