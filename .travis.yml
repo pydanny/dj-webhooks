@@ -1,6 +1,8 @@
 # Config file for automatic testing at travis-ci.org
 
 language: python
+services:
+  - redis
 
 python:
   - "3.3"
