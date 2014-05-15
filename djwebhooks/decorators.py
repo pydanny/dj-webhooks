@@ -32,6 +32,8 @@ hook = partial(
 
 hook.__doc__ = getattr(sender_callable, "doc", "No documentation yet!")
 
+hook.__doc__ = "blarg"
+help(hook)
 
 # alias the hook function
 webhook = hook
