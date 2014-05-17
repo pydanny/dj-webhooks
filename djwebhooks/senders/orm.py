@@ -54,12 +54,12 @@ def orm_callable(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     """
 
     if "event" not in dkwargs:
-        msg = "webhooks.django.decorators.hook requires an 'event' argument."
+        msg = "djwebhooks.decorators.hook requires an 'event' argument in the decorator."
         raise TypeError(msg)
     event = dkwargs['event']
 
     if "owner" not in kwargs:
-        msg = "webhooks.django.senders.orm.sender requires an 'owner' argument."
+        msg = "djwebhooks.senders.orm_callable requires an 'owner' argument in the decorated function."
         raise TypeError(msg)
     owner = kwargs['owner']
 

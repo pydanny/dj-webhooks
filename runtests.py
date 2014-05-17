@@ -20,7 +20,8 @@ try:
         ],
         SITE_ID=1,
         NOSE_ARGS=['-s'],
-        WEBHOOK_EVENTS=['test.one', 'test.two'],
+        WEBHOOK_ATTEMPTS=[0, 0, 0],
+        WEBHOOK_EVENTS=['test.success', 'test.failure'],
         WEBHOOKS_SENDER="djwebhooks.senders.orm.sender",
         RQ_QUEUES={
             'default': {
