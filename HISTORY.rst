@@ -3,6 +3,15 @@
 History
 -------
 
+0.2.1 (2014-05-17)
+++++++++++++++++++
+
+* Removed conf.py file as it just added abstraction
+* Created exlicitly importable hooks. Makes settings management easier.
+* Removed utils.py since we no longer do fancy dynamic imports (see previous bullet).
+* Coverage now at 100%
+
+
 0.2.0 (2014-05-15)
 ++++++++++++++++++
 
