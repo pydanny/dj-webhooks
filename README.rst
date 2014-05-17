@@ -22,6 +22,7 @@ The full documentation is at https://dj-webhooks.readthedocs.org.
 Requirements
 ------------
 
+* Python 2.7.x or 3.3.2 or higher
 * django>=1.5.5
 * django-jsonfield>=0.9.12
 * django-model-utils>=2.0.2
@@ -115,21 +116,14 @@ Assuming you are running Redis and also have django-rq configured:
         job = send_purchase_confirmation(purchase=purchase, owner=user)
 
 
-
-Requirements
--------------
-
-* Python 2.7.x or 3.3.2 or higher
-* Django 1.5 or higher
-
 Features
 --------
 
 * Synchronous webhooks
 * Delivery tracking via Django ORM.
+* Options for asynchronous webhooks.
 
 Planned Features
 -----------------
 
-* Options for asynchronous webhooks
 * Delivery tracking via Redis and other write-fast datastores.

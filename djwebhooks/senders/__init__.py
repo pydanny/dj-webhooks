@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from .orm import sender as orm_sender
+from .orm import orm_callable
+from .redisq import redisq_callable

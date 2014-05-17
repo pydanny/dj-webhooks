@@ -64,7 +64,7 @@ def worker(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     return senderobj.send()
 
 
-def sender(wrapped, dkwargs, hash_value=None, *args, **kwargs):
+def redisq_callable(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     logger.debug("Starting async")
     job = worker(wrapped, dkwargs, hash_value, *args, **kwargs)
     logger.debug("Ending async")
