@@ -14,7 +14,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
 from djwebhooks.models import WebhookTarget, Delivery, event_choices
-from djwebhooks import conf
 
 User = get_user_model()
 WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
@@ -32,7 +31,7 @@ class TestWebhookTarget(TestCase):
     def test_webhook_target(self):
         webhook = WebhookTarget.objects.create(
             owner=self.user,
-            event=conf.WEBHOOK_EVENTS[0],
+            event=WEBHOOK_EVENTS[0],
             target_url="http://httpbin.com"
         )
         self.assertEqual(WebhookTarget.objects.count(), 1)

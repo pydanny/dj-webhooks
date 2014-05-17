@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 
 from djwebhooks.decorators import webhook
 from djwebhooks.models import WebhookTarget, Delivery
-from djwebhooks import conf
 
 User = get_user_model()
 WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
