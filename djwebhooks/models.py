@@ -1,15 +1,32 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 from jsonfield.fields import JSONField
 from model_utils.models import TimeStampedModel
 
-from .conf import WEBHOOK_EVENTS_CHOICES
 
 CONTENT_TYPE_JSON = "application/json"
 CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
+
+
+def event_choices(events):
+    """ Get the possible events from settings """
+    if events is None:
+        msg = "Please add some events in settings.WEBHOOK_EVENTS."
+        raise ImproperlyConfigured(msg)
+    try:
+        choices = [(x, x) for x in events]
+    except TypeError:
+        """ Not a valid iterator, so we raise an exception """
+        msg = "settings.WEBHOOK_EVENTS must be an iterable object."
+        raise ImproperlyConfigured(msg)
+    return choices
+
+WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
+WEBHOOK_EVENTS_CHOICES = event_choices(WEBHOOK_EVENTS)
 
 
 @python_2_unicode_compatible

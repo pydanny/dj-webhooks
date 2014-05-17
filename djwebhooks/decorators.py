@@ -41,3 +41,6 @@ redis_hook = partial(
     sender_callable=redisq_callable,
     hash_function=basic_hash_function
 )
+
+# alias the redis_hook function
+redis_webhook = redis_hook

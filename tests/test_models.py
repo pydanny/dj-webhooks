@@ -8,13 +8,16 @@ test_dj-webhooks
 Tests for `dj-webhooks` models module.
 """
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
-from djwebhooks.models import WebhookTarget, Delivery
+from djwebhooks.models import WebhookTarget, Delivery, event_choices
 from djwebhooks import conf
 
 User = get_user_model()
+WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
 
 
 class TestWebhookTarget(TestCase):
@@ -48,7 +51,7 @@ class TestWebhookTarget(TestCase):
     def test_delivery(self):
         webhook_target = WebhookTarget.objects.create(
             owner=self.user,
-            event=conf.WEBHOOK_EVENTS[0],
+            event=WEBHOOK_EVENTS[0],
             target_url="http://httpbin.com"
         )
         delivery = Delivery.objects.create(
@@ -60,5 +63,18 @@ class TestWebhookTarget(TestCase):
         self.assertTrue(str(delivery).endswith("=>testuser=>http://httpbin.com"))
 
 
+class TestEventChoices(TestCase):
 
+    def test_no_settings(self):
+        self.assertRaises(
+            ImproperlyConfigured,
+            event_choices,
+            None
+        )
 
+    def test_bad_settings(self):
+        self.assertRaises(
+            ImproperlyConfigured,
+            event_choices,
+            5
+        )

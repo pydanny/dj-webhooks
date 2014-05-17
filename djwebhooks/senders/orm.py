@@ -1,10 +1,16 @@
+from django.conf import settings
+
 from webhooks.senders.base import Senderable
 
-from ..conf import (
-        WEBHOOK_OWNER_FIELD,
-        WEBHOOK_ATTEMPTS,
-    )
 from ..models import WebhookTarget, Delivery
+
+# For use with custom user models, this lets you define the owner field on a model
+WEBHOOK_OWNER_FIELD = getattr(settings, "WEBHOOK_OWNER_FIELD", "username")
+
+# List the attempts as an iterable of integers.
+#   Each number represents the amount of time to be slept between attempts
+#   The first number should always be 0 so no time is wasted.
+WEBHOOK_ATTEMPTS = getattr(settings, "WEBHOOK_EVENTS", (0, 15, 30, 60))
 
 
 class DjangoSenderable(Senderable):

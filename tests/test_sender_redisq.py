@@ -1,6 +1,7 @@
 import logging
 import time
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -8,9 +9,9 @@ from django.test.utils import override_settings
 
 from djwebhooks.decorators import redis_hook
 from djwebhooks.models import WebhookTarget
-from djwebhooks import conf
 
 User = get_user_model()
+WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
 
 logger = logging.getLogger()
 
@@ -27,14 +28,14 @@ class BasicTest(TestCase):
 
         self.webook_target = WebhookTarget.objects.create(
             owner=self.user,
-            event=conf.WEBHOOK_EVENTS[0],
+            event=WEBHOOK_EVENTS[0],
             target_url="http://httpbin.com"
         )
 
     @override_settings(WEBHOOKS_SENDER='djwebhooks.senders.redisq.sender')
     def test_webhook(self):
 
-        @redis_hook(event=conf.WEBHOOK_EVENTS[0])
+        @redis_hook(event=WEBHOOK_EVENTS[0])
         def basic(owner):
             return {"what": "me worry?"}
 
