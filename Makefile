@@ -34,8 +34,8 @@ test-all:
 
 coverage:
 	coverage run --source djwebhooks runtests.py
-	coverage report -m --omit=djwebhooks/admin.py
-	coverage html --omit=djwebhooks/admin.py
+	coverage report -m --omit=djwebhooks/admin.py,djwebhooks/migrations/*
+	coverage html --omit=djwebhooks/admin.py,djwebhooks/migrations/*
 	open htmlcov/index.html
 
 docs:

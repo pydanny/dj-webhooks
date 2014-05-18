@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-import logging
+# -*- coding: utf-8 -*-
 import logging
 
 from django.conf import settings
@@ -50,13 +50,22 @@ def worker(wrapped, dkwargs, hash_value=None, *args, **kwargs):
         raise TypeError(msg)
     owner = kwargs['owner']
 
+    if "identifier" not in kwargs:
+        msg = "djwebhooks.senders.orm_callable requires an 'identifier' argument in the decorated function."
+        raise TypeError(msg)
+    identifier = kwargs['identifier']
+
     senderobj = DjangoRQSenderable(
             wrapped, dkwargs, hash_value, WEBHOOK_ATTEMPTS, *args, **kwargs
     )
 
     # Add the webhook object just so it's around
     # TODO - error handling if this can't be found
-    senderobj.webhook_target = WebhookTarget.objects.get(event=event, owner=owner)
+    senderobj.webhook_target = WebhookTarget.objects.get(
+        event=event,
+        owner=owner,
+        identifier=identifier
+    )
 
     # Get the target url and add it
     senderobj.url = senderobj.webhook_target.target_url

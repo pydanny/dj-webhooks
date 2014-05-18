@@ -47,8 +47,14 @@ class WebhookTarget(TimeStampedModel):
 
     # TODO - add Webhook event choices as indivial attributes to this model, instantiated or not
 
+    # represents the user who is responsible for this WT
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='webhooks')
+
+    # The event name as set in WEBHOOK_EVENTS
     event = models.CharField(max_length=255, choices=WEBHOOK_EVENTS_CHOICES)
+
+    # The custom identifier for this webhook as set by the project or the owner
+    identifier = models.CharField(max_length=255, blank=True)
 
     target_url = models.URLField(max_length=255)
 

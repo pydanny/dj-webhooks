@@ -3,10 +3,18 @@
 History
 -------
 
+0.2.2 (2014-05-??)
++++++++++++++++++++
+
+* Added identifier field to WebhookTarget
+* Added identifier argument to orm and redisq senders.
+* Added South migrations for Django=<1.6.
+* Declared coding in all Python modules. 
+
 0.2.1 (2014-05-17)
 ++++++++++++++++++
 
-* Removed conf.py file as it just added abstraction
+* Removed conf.py file as it just added abstraction.
 * Created exlicitly importable hooks. Makes settings management easier.
 * Removed utils.py since we no longer do fancy dynamic imports (see previous bullet).
 * Coverage now at 100%

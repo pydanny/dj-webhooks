@@ -26,14 +26,19 @@ class BasicTest(TestCase):
             password="testpassword"
         )
 
+        self.identifier1 = 'afdasfjasd3485'
+        self.identifier2 = 'vrefr9jqaw9efj'
+
         self.webook_target = WebhookTarget.objects.create(
             owner=self.user,
             event=WEBHOOK_EVENTS[0],
+            identifier=self.identifier1,
             target_url="http://httpbin.org"
         )
         self.fail_target = WebhookTarget.objects.create(
             owner=self.user,
             event=WEBHOOK_EVENTS[1],
+            identifier=self.identifier2,
             target_url="http://httpbin.org/status/400"
         )
 
@@ -41,10 +46,10 @@ class BasicTest(TestCase):
     def test_webhook(self):
 
         @redis_hook(event=WEBHOOK_EVENTS[0])
-        def basic(owner):
+        def basic(owner, identifier):
             return {"what": "me worry?"}
 
-        job = basic(owner=self.user)
+        job = basic(owner=self.user, identifier=self.identifier1)
         for i in range(10):
             if isinstance(job, dict):
                 result = job
@@ -60,10 +65,10 @@ class BasicTest(TestCase):
     def test_failed_webhook(self):
 
         @redis_hook(event=WEBHOOK_EVENTS[1])
-        def basic(owner):
+        def basic(owner, identifier):
             return {"what": "me worry?"}
 
-        results = basic(owner=self.user)
+        results = basic(owner=self.user, identifier=self.identifier2)
 
         self.assertEqual(results['what'], "me worry?")
 
@@ -72,7 +77,7 @@ class BasicTest(TestCase):
     def test_event_dkwarg(self):
 
         @redis_hook(number=123)
-        def basic(owner):
+        def basic(owner, identifier):
             return {"what": "me worry?"}
 
         self.assertRaises(TypeError, basic, self.user)
@@ -85,3 +90,15 @@ class BasicTest(TestCase):
 
         self.assertRaises(TypeError, basic)
 
+    def test_identifier_kwarg(self):
+
+        @redis_hook(event=WEBHOOK_EVENTS[0])
+        def basic(owner='pydanny'):
+            return {"what": "me worry?"}
+
+        with self.assertRaises(TypeError):
+            basic(owner='danny')
+
+    def test_cant_find_webhook_target(self):
+        # TODO
+        pass

@@ -60,6 +60,7 @@ Add some webhook targets:
         owner=user,
         event="purchase.paid",
         target_url="https://mystorefront.com/webhooks/",
+        identifier="User or system defined string",
         header_content_type=Webhook.CONTENT_TYPE_JSON,
     )
 
@@ -77,7 +78,7 @@ Then use it in a project:
 
     # Event argument helps identify the webhook target
     @hook(event="purchase.paid")
-    def send_purchase_confirmation(purchase, owner): # Webhook_owner also helps identify the webhook target
+    def send_purchase_confirmation(purchase, owner, identifier): 
         return {
             "order_num": purchase.order_num,
             "date": purchase.confirm_date,
@@ -85,7 +86,11 @@ Then use it in a project:
         }
 
     for purchase in Purchase.objects.filter(status="paid"):
-        send_purchase_confirmation(purchase=purchase, owner=user)
+        send_purchase_confirmation(
+            purchase=purchase, 
+            owner=user,
+            identifier="User or system defined string"
+        )
 
 In a queue using django-rq
 ----------------------------
@@ -105,7 +110,7 @@ Assuming you are running Redis and also have django-rq configured:
 
     # Event argument helps identify the webhook target
     @redis_hook(event="purchase.paid")
-    def send_purchase_confirmation(purchase, owner): # Webhook_owner also helps identify the webhook target
+    def send_purchase_confirmation(purchase, owner, identifier):
         return {
             "order_num": purchase.order_num,
             "date": purchase.confirm_date,
@@ -113,8 +118,11 @@ Assuming you are running Redis and also have django-rq configured:
         }
 
     for purchase in Purchase.objects.filter(status="paid"):
-        job = send_purchase_confirmation(purchase=purchase, owner=user)
-
+        job =         send_purchase_confirmation(
+            purchase=purchase, 
+            owner=user,
+            identifier="User or system defined string"
+        )
 
 Features
 --------
