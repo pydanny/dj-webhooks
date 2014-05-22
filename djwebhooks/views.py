@@ -1,10 +1,21 @@
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.views.generic import DetailView
 
 from .braces.views import LoginRequiredMixin
+from redis import StrictRedis
+
 from .models import Delivery, WebhookTarget
+from .senders.redislog import make_key
+
+# Set up redis coonection
+# TODO - Use other Django redis-package settings names
+redis = StrictRedis(
+    host=getattr(settings, "REDIS_HOST", 'localhost'),
+    port=getattr(settings, "REDIS_PORT", 6379),
+    db=getattr(settings, "REDIS_DB", 0))
 
 
 class WebhookTargetDetailView(DetailView):
@@ -62,8 +73,13 @@ class WebhookTargetRedisDetailView(WebhookTargetDetailView):
 
     @cached_property
     def deliveries(self):
-        """ TODO get deliveries from Redis"""
-        return []
+        """ Get delivery log from Redis"""
+        key = make_key(
+            event=self.object.event,
+            owner_name=self.object.owner.username,
+            identifier=self.object.identifier
+        )
+        return redis.lrange(key, 0, 20)
 
 
 class ProtectedWebhookTargetRedisDetailView(WebhookTargetRedisDetailView):

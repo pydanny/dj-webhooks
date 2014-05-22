@@ -1,5 +1,6 @@
 coverage
 django>=1.5.5
+django-braces>=1.0
 django-jsonfield>=0.9.12
 django-model-utils>=2.0.2
 django-rq>=0.6.1
