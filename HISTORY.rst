@@ -10,6 +10,7 @@ History
 * Added identifier argument to orm and redisq senders.
 * Added South migrations for Django=<1.6.
 * Declared coding in all Python modules. 
+* Added verbose names to models
 
 0.2.1 (2014-05-17)
 ++++++++++++++++++

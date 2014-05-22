@@ -40,6 +40,7 @@ setup(
         "webhooks>=0.3.1",
         "django-jsonfield>=0.9.12",
         "django-model-utils>=2.0.2",
+        "json262",
         "django-rq>=0.6.1"
     ],
     license="BSD",

@@ -54,7 +54,7 @@ class WebhookTarget(TimeStampedModel):
     event = models.CharField(max_length=255, choices=WEBHOOK_EVENTS_CHOICES)
 
     # The custom identifier for this webhook as set by the project or the owner
-    identifier = models.CharField(max_length=255, blank=True)
+    identifier = models.SlugField(max_length=255, blank=True)
 
     target_url = models.URLField(max_length=255)
 
@@ -62,9 +62,10 @@ class WebhookTarget(TimeStampedModel):
                 max_length=255, choices=CONTENT_TYPE_CHOICES, default=CONTENT_TYPE_JSON)
 
     def __str__(self):
-        return "{}=>{}".format(
-            self.owner.username,
-            self.target_url[:30]
+        return "{}:{}:{}".format(
+            self.event,
+            self.target_url[:30],
+            self.identifier
         )
 
     class Meta:
@@ -103,3 +104,5 @@ class Delivery(TimeStampedModel):
     class Meta:
         ordering = ["-created"]
         get_latest_by = "created"
+        verbose_name = 'Delivery'
+        verbose_name_plural = 'Deliveries'

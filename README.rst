@@ -92,10 +92,10 @@ Then use it in a project:
             identifier="User or system defined string"
         )
 
-In a queue using django-rq
-----------------------------
+Storing delivery logs in Redis
+-------------------------------
 
-Assuming you are running Redis and also have django-rq configured:
+**Note:** The only difference between this and the previous example is the use of the redislog_hook.
 
 .. code-block:: python
 
@@ -103,14 +103,13 @@ Assuming you are running Redis and also have django-rq configured:
     User = get_user_model()
     user = User.objects.get(username="pydanny")
 
-    # import redis hook
-    from djwebhooks.decorators import redis_hook
+    from djwebhooks.decorators import redislog_hook
 
     from myproject.models import Purchase
 
     # Event argument helps identify the webhook target
-    @redis_hook(event="purchase.paid")
-    def send_purchase_confirmation(purchase, owner, identifier):
+    @redislog_hook(event="purchase.paid")
+    def send_purchase_confirmation(purchase, owner, identifier): 
         return {
             "order_num": purchase.order_num,
             "date": purchase.confirm_date,
@@ -118,11 +117,19 @@ Assuming you are running Redis and also have django-rq configured:
         }
 
     for purchase in Purchase.objects.filter(status="paid"):
-        job =         send_purchase_confirmation(
+        send_purchase_confirmation(
             purchase=purchase, 
             owner=user,
             identifier="User or system defined string"
         )
+
+
+In a queue using django-rq
+----------------------------
+
+**Warning:** In practice I've found it's much more realistic to use the ORM or Redislib webhooks and define seperate asynchronous jobs then to rely on the ``djwebhooks.redisq_hook decorator``. Therefore, this functionality is deprecated.
+
+
 
 Features
 --------

@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 
-from djwebhooks.decorators import redis_hook
+from djwebhooks.decorators import redisq_hook
 from djwebhooks.models import WebhookTarget
 
 User = get_user_model()
@@ -45,7 +45,7 @@ class BasicTest(TestCase):
     @override_settings(WEBHOOKS_SENDER='djwebhooks.senders.redisq.sender')
     def test_webhook(self):
 
-        @redis_hook(event=WEBHOOK_EVENTS[0])
+        @redisq_hook(event=WEBHOOK_EVENTS[0])
         def basic(owner, identifier):
             return {"what": "me worry?"}
 
@@ -64,7 +64,7 @@ class BasicTest(TestCase):
 
     def test_failed_webhook(self):
 
-        @redis_hook(event=WEBHOOK_EVENTS[1])
+        @redisq_hook(event=WEBHOOK_EVENTS[1])
         def basic(owner, identifier):
             return {"what": "me worry?"}
 
@@ -76,7 +76,7 @@ class BasicTest(TestCase):
 
     def test_event_dkwarg(self):
 
-        @redis_hook(number=123)
+        @redisq_hook(number=123)
         def basic(owner, identifier):
             return {"what": "me worry?"}
 
@@ -84,7 +84,7 @@ class BasicTest(TestCase):
 
     def test_owner_kwarg(self):
 
-        @redis_hook(event=WEBHOOK_EVENTS[0])
+        @redisq_hook(event=WEBHOOK_EVENTS[0])
         def basic():
             return {"what": "me worry?"}
 
@@ -92,7 +92,7 @@ class BasicTest(TestCase):
 
     def test_identifier_kwarg(self):
 
-        @redis_hook(event=WEBHOOK_EVENTS[0])
+        @redisq_hook(event=WEBHOOK_EVENTS[0])
         def basic(owner='pydanny'):
             return {"what": "me worry?"}
 

@@ -59,7 +59,7 @@ class TestWebhookTarget(TestCase):
             payload={},
         )
         self.assertTrue(str(delivery).startswith('False=>'))
-        self.assertTrue(str(delivery).endswith("=>testuser=>http://httpbin.com"))
+        self.assertTrue(str(delivery).endswith("test.success:http://httpbin.com:"))
 
 
 class TestEventChoices(TestCase):

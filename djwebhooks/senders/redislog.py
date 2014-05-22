@@ -34,7 +34,7 @@ from django.conf import settings
 
 from webhooks.senders.base import Senderable
 
-from ..models import WebhookTarget, Delivery
+from ..models import WebhookTarget
 
 # For use with custom user models, this lets you define the owner field on a model
 WEBHOOK_OWNER_FIELD = getattr(settings, "WEBHOOK_OWNER_FIELD", "username")
@@ -45,36 +45,21 @@ WEBHOOK_OWNER_FIELD = getattr(settings, "WEBHOOK_OWNER_FIELD", "username")
 WEBHOOK_ATTEMPTS = getattr(settings, "WEBHOOK_EVENTS", (0, 15, 30, 60))
 
 
-class DjangoSenderable(Senderable):
+class RedisLogSenderable(Senderable):
 
     def notify(self, message):
-        if self.success:
-            Delivery.objects.create(
-                webhook_target=self.webhook_target,
-                payload=self.payload,
-                attempt=self.attempt,
-                success=self.success,
-                response_message=self.response.content,
-                hash_value=self.hash_value,
-                response_status=self.response.status_code,
-                notification=message
-            )
-        else:
-            Delivery.objects.create(
-                webhook_target=self.webhook_target,
-                payload=self.payload,
-                attempt=self.attempt,
-                success=self.success,
-                hash_value=self.hash_value,
-                notification=message
-            )
+        """
+            TODO: Add code to lpush to redis stack
+                    rpop when stack hits size 'X'
+        """
+
+        pass
 
 
-def orm_callable(wrapped, dkwargs, hash_value=None, *args, **kwargs):
+def redislog_callable(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     """
         This is a synchronous sender callable that uses the Django ORM to store
-            webhooks and the delivery log. Meant as proof of concept and not
-            as something for heavy production sites.
+            webhooks and Redis for the delivery log.
 
         dkwargs argument requires the following key/values:
 
@@ -91,16 +76,16 @@ def orm_callable(wrapped, dkwargs, hash_value=None, *args, **kwargs):
     event = dkwargs['event']
 
     if "owner" not in kwargs:
-        msg = "djwebhooks.senders.orm_callable requires an 'owner' argument in the decorated function."
+        msg = "djwebhooks.senders.redislog_callable requires an 'owner' argument in the decorated function."
         raise TypeError(msg)
     owner = kwargs['owner']
 
     if "identifier" not in kwargs:
-        msg = "djwebhooks.senders.orm_callable requires an 'identifier' argument in the decorated function."
+        msg = "djwebhooks.senders.redislog_callable requires an 'identifier' argument in the decorated function."
         raise TypeError(msg)
     identifier = kwargs['identifier']
 
-    senderobj = DjangoSenderable(
+    senderobj = RedisLogSenderable(
             wrapped, dkwargs, hash_value, WEBHOOK_ATTEMPTS, *args, **kwargs
     )
 
