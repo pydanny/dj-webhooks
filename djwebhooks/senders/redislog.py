@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from redis import StrictRedis
+
 from webhooks.decorators import base_hook
 from webhooks.hashes import basic_hash_function
 from webhooks.senders.base import Senderable, StandardJSONEncoder
