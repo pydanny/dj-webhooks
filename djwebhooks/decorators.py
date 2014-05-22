@@ -19,7 +19,7 @@ from webhooks.decorators import base_hook
 from webhooks.hashes import basic_hash_function
 
 
-from .senders import orm_callable, redislog_callable, redisq_callable
+from .senders import orm_callable, redisq_callable, redislog_hook
 
 
 # This is decorator that does all the lifting.
@@ -34,18 +34,6 @@ hook = partial(
 webhook = hook
 
 
-# Make the redis log hook work
-# This is decorator that does all the lifting.
-redislog_hook = partial(
-    base_hook,
-    sender_callable=redislog_callable,
-    hash_function=basic_hash_function
-)
-
-# alias the redis_hook function
-redislog_webhook = redislog_hook
-
-
 # Make the redis queue hook work
 # This is decorator that does all the lifting.
 redisq_hook = partial(
@@ -57,4 +45,5 @@ redisq_hook = partial(
 # alias the redis_hook function
 redisq_webhook = redisq_hook
 
-
+# alias the redis_hook function
+redislog_webhook = redislog_hook

@@ -54,7 +54,7 @@ class DjangoSenderable(Senderable):
                 payload=self.payload,
                 attempt=self.attempt,
                 success=self.success,
-                response_message=self.response.content,
+                response_message=self.response_content,
                 hash_value=self.hash_value,
                 response_status=self.response.status_code,
                 notification=message
