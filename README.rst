@@ -92,8 +92,8 @@ Then use it in a project:
             identifier="User or system defined string"
         )
 
-Storing delivery logs in Redis
--------------------------------
+Storing Redis delivery logs
+---------------------------
 
 **Note:** The only difference between this and the previous example is the use of the redislog_hook.
 

@@ -3,9 +3,10 @@
 History
 -------
 
-0.2.2 (2014-05-??)
+0.2.2 (2014-05-22)
 +++++++++++++++++++
 
+* Added redislog_hook. This synchronous hook saves the hook results to redis lists.
 * Added identifier field to WebhookTarget
 * Added identifier argument to orm and redisq senders.
 * Added South migrations for Django=<1.6.

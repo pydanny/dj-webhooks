@@ -36,7 +36,7 @@ class BasicTest(TestCase):
         self.identifier2 = 'vrefr9jqaw9efj'
 
         self.key1 = make_key(WEBHOOK_EVENTS[0], self.user.username, self.identifier1)
-        self.key2 = make_key(WEBHOOK_EVENTS[0], self.user.username, self.identifier2)
+        self.key2 = make_key(WEBHOOK_EVENTS[1], self.user.username, self.identifier2)
 
         self.webook_target = WebhookTarget.objects.create(
             owner=self.user,
@@ -84,9 +84,13 @@ class BasicTest(TestCase):
 
         self.assertEqual(results['what'], "me worry?")
 
-        # d = Delivery.objects.latest()
+        self.assertEqual(redis.llen(self.key2), 1)
 
-        # self.assertEqual(d.success, False)
+        d = redis.lindex(self.key2, 0)
+        d = always_string(d)
+        data = json.loads(d)
+
+        self.assertEqual(data['success'], False)
 
     def test_event_dkwarg(self):
 
