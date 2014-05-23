@@ -1,10 +1,13 @@
+"""
+This are sample views which probably will not match your use case.
+"""
+
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.views.generic import DetailView
 
-from .braces.views import LoginRequiredMixin
 from redis import StrictRedis
 
 from .models import Delivery, WebhookTarget
@@ -46,11 +49,11 @@ class WebhookTargetDetailView(DetailView):
     @cached_property
     def deliveries(self):
         return Delivery.objects.filter(
-            webhoot_target=self.webhoot_target
+            webhoot_target=self.webhook_target
         )[:self.max_deliveries_listed]
 
 
-class ProtectedWebhookTargetDetailView(LoginRequiredMixin, WebhookTargetDetailView):
+class ProtectedWebhookTargetDetailView(WebhookTargetDetailView):
 
     def get_object(self):
         if 'pk' in self.kwargs:
