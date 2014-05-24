@@ -6,6 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from jsonfield.fields import JSONField
 from model_utils.models import TimeStampedModel
+from multiselectfield import MultiSelectField
 
 
 CONTENT_TYPE_JSON = "application/json"
@@ -27,6 +28,14 @@ def event_choices(events):
 
 WEBHOOK_EVENTS = getattr(settings, "WEBHOOK_EVENTS", None)
 WEBHOOK_EVENTS_CHOICES = event_choices(WEBHOOK_EVENTS)
+
+
+class EventableModel(models.Model):
+    """Helps compose a model that connects to the WebhookTarget model"""
+    events = MultiSelectField(choices=WEBHOOK_EVENTS_CHOICES, max_length=255)
+
+    class Meta:
+        abstract = True
 
 
 @python_2_unicode_compatible

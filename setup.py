@@ -40,6 +40,7 @@ setup(
         "webhooks>=0.4.1",
         "django-jsonfield>=0.9.12",
         "django-model-utils>=2.0.2",
+        "django-multiselectfield>=0.1.2",
         "standardjson",
         "django-rq>=0.6.1"
     ],
