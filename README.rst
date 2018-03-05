@@ -2,13 +2,13 @@
 dj-webhooks
 =============================
 
-.. image:: https://pypip.in/d/dj-webhooks/badge.png
+.. image:: https://img.shields.io/pypi/dm/dj-webhooks.svg
         :target: https://pypi.python.org/pypi/dj-webhooks
 
 .. image:: https://badge.fury.io/py/dj-webhooks.png
     :target: https://badge.fury.io/py/dj-webhooks
 
-.. image:: https://pypip.in/wheel/dj-webhooks/badge.png
+.. image:: https://img.shields.io/pypi/wheel/dj-webhooks.svg
     :target: https://pypi.python.org/pypi/dj-webhooks/
     :alt: Wheel Status
 
